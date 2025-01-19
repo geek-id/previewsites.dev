@@ -1,0 +1,23 @@
+# Base image with Nginx and Lua support
+FROM openresty/openresty:latest
+
+# Install necessary tools (e.g Lua modules)
+RUN apt-get update && apt-get install -y curl \
+    curl unzip luarocks \
+    && luarocks install lua-cjson \
+    && luarocks install lua-resty-http
+
+# Set working directory
+WORKDIR /usr/local/openresty/nginx
+
+# Copy the nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy the HTML form (index.html)
+COPY html /usr/local/openresty/nginx/html
+
+# Expose port 3019 for HTTP Traffic
+EXPOSE 3019
+
+# Start nginx when the container starts
+CMD [ "/usr/local/openresty/nginx/sbin/nginx", "-g", "daemon off;" ]

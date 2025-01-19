@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Previewsites.dev</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; }
+            form { margin-bottom: 20px; }
+            input, button { padding: 10px; margin: 5px; }
+        </style>
+    </head>
+    <body>
+        <h1>
+            Create Site Preview
+        </h1>
+        <form id="previewForm" method="POST" action="/create-preview">
+            <label for="domain">Domain Name</label><br>
+            <input type="text" id="domain" name="domain" required><br><br>
+            <label for="ip">Server IP:</label><br>
+            <input type="text" id="ip" name="ip" required><br><br>
+            <button type="submit"Create Preview></button>
+        </form>
+        <div id="result"></div>
+        <script>
+            const form = document.getElementById('previewForm');
+            const resultDiv = document.getElementById('result');
+
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const domain = formData.get('domain');
+                const ip = formData.get('ip');
+
+                const response = await fetch('/create-preview?domain=' + encodeURIComponent(domain) + '&ip=' + encodeURIComponent(ip), {
+                    method: 'GET'
+                });
+                const text = await response.text();
+                resultDiv.innerHTML = '<strong>' + text + '</strong>';
+            };
+        </script>
+    </body>
+</html>

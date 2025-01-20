@@ -75,20 +75,6 @@
 
 ---
 
-## 🌐 **Monetization Potential**
-
-### **White-Label Service for Hosting Providers**
-- Partner with hosting companies to provide branded previews under their domain (e.g., `preview.yourhosting.com`).
-- Charge hosting providers a subscription fee for using the service.
-
-### **Ad-Supported Model**
-- Display targeted ads on the preview pages.
-
-### **Premium Plans**
-- Offer extended expiration times, custom branding, or additional features for a fee.
-
----
-
 ## 📖 **Contributing**
 
 We welcome contributions to improve **previewsites.dev**! Feel free to submit a pull request or open an issue with your suggestions.

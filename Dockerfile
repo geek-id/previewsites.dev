@@ -3,7 +3,7 @@ FROM openresty/openresty:latest
 
 # Install necessary tools (e.g Lua modules)
 RUN apt-get update && apt-get install -y curl \
-    curl unzip luarocks \
+    ca-certificates curl unzip luarocks \
     && luarocks install lua-cjson \
     && luarocks install lua-resty-http
 
@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y curl \
 WORKDIR /usr/local/openresty/nginx
 
 # Copy the nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 
 # Copy the HTML form (index.html)
 COPY html /usr/local/openresty/nginx/html

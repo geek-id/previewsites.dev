@@ -17,7 +17,7 @@ COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 COPY html /usr/local/openresty/nginx/html
 
 # Expose port 3019 for HTTP Traffic
-EXPOSE 3019
+EXPOSE 80
 
 # Start nginx when the container starts
 CMD [ "/usr/local/openresty/nginx/sbin/nginx", "-g", "daemon off;" ]

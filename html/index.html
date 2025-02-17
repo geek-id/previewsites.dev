@@ -4,12 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hero Section with Burger Menu</title>
+    <title>PreviewSites.dev | Generate Site Preview Before Change DNS </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Cloudflare Turnstile JS -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
     <style type="text/tailwindcss">
         @layer utilities {
             .hamburger-toggle div {
@@ -50,7 +52,7 @@
         <!-- Background Blur -->
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-700 via-purple-700 to-transparent opacity-70 blur-3xl pointer-events-none"></div>
         <div class="relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
-            <nav class="bg-transparent py-4 max-w-6xl mx-auto items-center">
+            <nav class="bg-transparent py-4 max-w-6xl mx-auto mt-8 items-center">
                 <div class="grid grid-cols-3 items-center">
                     <!-- Logo -->
                     <div>
@@ -60,12 +62,10 @@
                         </a>
                     </div>
                     <!-- Navigation Links (Desktop) -->
-                    <div class="hidden md:flex justify-center space-x-8">
-                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">Docs</a>
-                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">Templates</a>
-                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">Guide</a>
-                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">Blog</a>
-                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">Pricing</a>
+                    <div class="hidden md:flex justify-end space-x-8">
+                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">How to Use</a>
+                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">Features</a>
+                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">FAQs</a>
                     </div>
                     <!-- Burger Menu (Mobile) -->
                     <div></div>
@@ -77,17 +77,15 @@
                 </div>
                 <!-- Mobile Navigation Links -->
                 <div id="mobile-navbar" class="hidden absolute top-16 right-0 bg-gray-900 w-full text-center flex-col space-y-4 py-6 rounded-lg shadow-lg z-99">
-                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4 z-50">Docs</a>
-                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4 z-50">Templates</a>
-                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4">Guide</a>
-                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4">Blog</a>
-                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4">Pricing</a>
+                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4 z-50">How to use</a>
+                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4 z-50">Features</a>
+                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4">FAQs</a>
                 </div>
             </nav>
         </div>
 
         <!-- Hero Section -->
-        <div class="flex flex-col lg:flex-row gap-2 relative mx-32 justify-center mt-16 text-center lg:text-left lg:mt-24 z-0">
+        <div class="flex flex-col lg:flex-row gap-2 relative lg:mx-32 justify-center mt-16 text-center lg:text-left lg:mt-24 z-0">
             <!-- Column 1: Image -->
             <div class="lg:w-full max-w-lg mt-8 lg:mt-0 relative z-0 hidden lg:block">
                 <img src="./assets/www-amico.png" alt="Hero Image" class="w-full h-auto max-w-[500px] z-0">
@@ -109,8 +107,8 @@
                 </p>
                 <!-- Buttons -->
                 <div class="mt-8 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:justify-center md:justify-center lg:justify-start">
-                    <a href="#" class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-600">Book a demo</a>
-                    <a href="#" class="bg-transparent border border-gray-700 text-gray-400 px-6 py-3 rounded-lg font-medium hover:text-white hover:border-white">Read our vision</a>
+                    <a href="#how-to" class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-600">How to Use</a>
+                    <a href="#features" class="bg-transparent border border-gray-700 text-gray-400 px-6 py-3 rounded-lg font-medium hover:text-white hover:border-white">Features</a>
                 </div>
             </div>
         </div>
@@ -140,88 +138,22 @@
                         </label>
                         <input type="text" id="ip" placeholder="192.168.10.119" class="w-full bg-white text-gray-200 placeholder-gray-400 p-3 rounded-md outline-none focus:ring-2 focus:ring-indigo-500 mb-4" onfocus="this.classList.add('text-black')" onblur="if(!this.value) this.classList.remove('text-black')" />
                     </div>
-
                     <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-8 rounded-md shadow-md transition-all mt-10 mb-8">Submit</button>
                 </form>
+                <!-- Turnstile Container -->
+                <div id="turnstile-container" class="flex flex-col items-start mb-4"></div>
 
                 <div id="result" class="result"></div>
             </div>
 
-            <!-- <div class="bg-indigo-950 py-16 rounded-xl mx-auto max-w-6xl">
-                <div class="grid grid-cols-1 gap-x-6 sm:grid-cols-6 mx-auto max-w-5xl">
-                    <form id="previewForm"></form>
-                        <div class="form-group sm:col-span-2 sm:col-start-1">
-                            <label for="domain" class="block font-medium text-white"><i class="fas fa-globe ms-2 me-1"></i> Domain Name</label>
-                            <div class="mt-2">
-                            <input type="text" name="domain" id="domain" autocomplete="address-level2" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" placeholder="previewsites.dev">
-                            </div>
-                        </div>
-                
-                        <div class="form-group sm:col-span-2">
-                            <label for="ip" class="block font-medium text-white">
-                                <i class="fa-solid fa-network-wired ms-2 me-2"></i> 
-                                <span class="inline-flex items-center bg-indigo-500 text-white text-xs px-2 py-0.5 rounded-full mr-1">New</span> IP Server 
-                            </label>
-                            <div class="mt-2">
-                                <input type="text" name="ip" id="ip" autocomplete="address-level1" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" placeholder="192.168.10.119">
-                            </div>
-                        </div>
-            
-                        <div class="form-group sm:col-span-1">
-                            <button type="submit" class="w-full bg-indigo-500 text-white px-4 py-2 rounded-full font-medium hover:bg-indigo-600 hover:bg-indigo-700 lg:mt-7 py-2">
-                                Submit
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div> -->
-
-
-            <!-- Form Input Preview Sites -->
-            <!-- <div class="bg-black-900">
-                <form id="previewForm" class="space-y-4">
-                    <div class="form-group">
-                        <label for="domain" class="block text-sm font-medium text-gray-300">🌍 Domain Name:</label>
-                        <input type="text" id="domain" name="domain" placeholder="example.com" required class="mt-1 block w-full p-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring focus:ring-indigo-500">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="ip" class="block text-sm font-medium text-gray-300">📌 New Server IP Address:</label>
-                        <input type="text" id="ip" name="ip" placeholder="192.168.1.100" required class="mt-1 block w-full p-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:outline-none focus:ring focus:ring-indigo-500">
-                    </div>
-
-                    <button type="submit" class="w-full bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-600">🔄 Generate Preview</button>
-                </form>
-
-                <div id="result" class="result"></div>
-            </div> -->
-
-            <!-- How to Use Section -->
-            <!-- <div class="how-to-use mt-8">
-                <h2 class="text-2xl font-bold text-white">How to Use</h2>
-                <p class="text-gray-400">Follow these steps to get started...</p>
-            </div> -->
-
-            <!-- FAQ Section -->
-            <!-- <div class="faq mt-8">
-                <h2 class="text-2xl font-bold text-white">FAQ</h2>
-                <p class="text-gray-400">Frequently asked questions...</p>
-            </div> -->
-
-            <!-- Client/User Testimonial Section -->
-            <!-- <div class="testimonials mt-8">
-                <h2 class="text-2xl font-bold text-white">Client/User Testimonials</h2>
-                <p class="text-gray-400">What our clients say...</p>
-            </div> -->
-
             <!-- Section How to use -->
-            <div class="text-white py-24 sm:py-32">
+            <section class="text-white py-24 sm:py-24" id="how-to">
                 <div class="mx-auto max-w-7xl px-6 lg:px-8">
                   <div class="mx-auto max-w-2xl lg:text-center">
                     <h2 class="text-4xl font-semibold tracking-tight sm:text-5xl">How to Use PreviewSites.dev</h2>
                     <p class="mt-2 text-lg/8 text-gray-400">Easily generate a <strong>site preview</strong> after migration to verify your website before final deployment.</p>
                   </div>
-                  <div class="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-700 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+                  <div class="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-700 pt-10 sm:mt-8 sm:pt-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
                     
                     <!-- Step 1 -->
                     <article class="flex max-w-xl flex-col items-start justify-between">
@@ -249,12 +181,14 @@
                     
                   </div>
                 </div>
-              </div>
+            </section>
 
             <!-- Section features of previewsites.dev -->
-            <div class="text-white py-24 sm:py-32">
-                <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                  <div class="mx-auto max-w-2xl lg:text-center">
+            <section class="text-white py-24 sm:py-8 relative" id="features">
+                <!-- <div class="absolute inset-0 bg-indigo-500 opacity-50 blur-3xl pointer-events-none z-0"></div> -->
+                <div class="absolute inset-0 bg-gradient-to-b from-indigo-700 via-indigo-400 to-purple-700 opacity-70 blur-3xl pointer-events-none z-0"></div>
+                <div class="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+                  <div class="mx-auto max-w-3xl lg:text-center">
                     <h2 class="text-base font-semibold text-indigo-400">Why Choose PreviewSites.dev</h2>
                     <p class="mt-2 text-4xl font-semibold tracking-tight text-white sm:text-5xl">Effortless Website Preview & Testing</p>
                     <p class="mt-6 text-lg text-gray-400">PreviewSites.dev simplifies the process of verifying website migrations, providing a seamless experience for developers and clients alike.</p>
@@ -268,7 +202,7 @@
                         <dt class="text-lg font-semibold">
                           <div class="absolute top-0 left-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
                             <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3" />
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825a4.5 4.5 0 01-6.375-6.375l2.25-2.25a4.5 4.5 0 016.375 6.375l-2.25 2.25zM10.125 5.175a4.5 4.5 0 016.375 6.375l-2.25 2.25a4.5 4.5 0 01-6.375-6.375l2.25-2.25z" />
                             </svg>
                           </div>
                           Instant Preview Links
@@ -317,10 +251,10 @@
                     </dl>
                   </div>
                 </div>
-              </div>
+            </section>
 
             <!-- Section FAQs -->
-            <section class="text-white py-24 sm:py-32">
+            <section class="text-white py-24 sm:py-24">
                 <div class="mx-auto max-w-7xl px-6 lg:px-8">
                   <div class="mx-auto max-w-2xl text-center">
                     <h2 class="text-base font-semibold text-indigo-400">FAQ</h2>
@@ -414,10 +348,9 @@
         </div>
         </div>
     </section>
-  
-    
 
     <script>
+        // Menu Toggle
         const menuToggle = document.getElementById('toggleMenu');
         const mobileNavbar = document.getElementById('mobile-navbar');
 
@@ -426,15 +359,15 @@
             menuToggle.classList.toggle('active');
         });
 
-        // Auto-collapse the mobile navbar on window resize
+        // Auto-collapse Mobile Navbar on Window Resize
         window.addEventListener('resize', () => {
-            if (window.innerWidth >= 768) { // Adjust the breakpoint as needed
-                mobileNavbar.classList.add('hidden'); // Hide mobile navbar
-                menuToggle.classList.remove('active'); // Reset toggle state
+            if (window.innerWidth >= 768) {
+                mobileNavbar.classList.add('hidden');
+                menuToggle.classList.remove('active');
             }
         });
 
-        // New script for form submission
+        // Form Submission with Turnstile Validation
         const form = document.getElementById('previewForm');
         const resultDiv = document.getElementById('result');
 
@@ -443,7 +376,16 @@
             resultDiv.style.display = "none";
             resultDiv.innerHTML = "⏳ Generating preview...";
 
+            const token = document.getElementById('cf-turnstile-response').value;
+            if (!token) {
+                resultDiv.innerHTML = "❌ Turnstile verification failed. Please complete the challenge.";
+                resultDiv.style.display = "block";
+                return;
+            }
+
             const formData = new FormData(form);
+            formData.append('turnstile_response', token);
+
             const response = await fetch('/create-preview', {
                 method: 'POST',
                 body: formData
@@ -453,7 +395,17 @@
             resultDiv.innerHTML = "✅ " + text;
             resultDiv.style.display = "block";
         };
+
+        // Render Cloudflare Turnstile
+        window.onload = function() {
+            turnstile.render('#turnstile-container', {
+                sitekey: '0x4AAAAAAA8-9yqendx2ylWx',
+                theme: 'light',
+                callback: function (token) {
+                    document.getElementById('cf-turnstile-response').value = token;
+                },
+            });
+        };
     </script>
 </body>
-
 </html>

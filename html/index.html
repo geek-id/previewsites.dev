@@ -4,7 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PreviewSites.dev | Generate Site Preview Before Change DNS </title>
+    <title>PreviewSites.dev | Best Alternative to /etc/hosts for Site Preview</title>
+    <meta name="description" content="Generate instant site preview links without modifying /etc/hosts. The perfect preview site solution for testing websites before DNS changes. Try our /etc/hosts alternative now!">
+    <meta name="keywords" content="site preview, preview site, /etc/hosts alternative, website preview, DNS testing">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="PreviewSites.dev - Site Preview Without /etc/hosts">
+    <meta property="og:description" content="Generate instant preview site links without modifying /etc/hosts. Perfect for testing websites before DNS changes.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://previewsites.dev">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PreviewSites.dev - Site Preview Without /etc/hosts">
+    <meta name="twitter:description" content="Generate instant preview site links without modifying /etc/hosts. Perfect for testing websites before DNS changes.">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +57,12 @@
                 transform: rotate(-45deg);
             }
         }
+
+        /* Add scroll behavior and padding */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px; /* Adjust this value based on your header height */
+        }
     </style>
 </head>
 
@@ -63,9 +83,9 @@
                     </div>
                     <!-- Navigation Links (Desktop) -->
                     <div class="hidden md:flex justify-end space-x-8">
-                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">How to Use</a>
-                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">Features</a>
-                        <a href="#" class="text-lg text-gray-300 hover:text-indigo-500">FAQs</a>
+                        <a href="#how-to" class="text-lg text-gray-300 hover:text-indigo-500">How to Use</a>
+                        <a href="#features" class="text-lg text-gray-300 hover:text-indigo-500">Features</a>
+                        <a href="#faqs" class="text-lg text-gray-300 hover:text-indigo-500">FAQs</a>
                     </div>
 
                     <!-- Right: "Part of AgemCloud" -->
@@ -83,9 +103,9 @@
                 </div>
                 <!-- Mobile Navigation Links -->
                 <div id="mobile-navbar" class="hidden absolute top-16 right-0 bg-gray-900 w-full text-center flex-col space-y-4 py-6 rounded-lg shadow-lg z-99">
-                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4 z-50">How to use</a>
-                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4 z-50">Features</a>
-                    <a href="#" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4">FAQs</a>
+                    <a href="#how-to" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4 z-50">How to use</a>
+                    <a href="#features" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4 z-50">Features</a>
+                    <a href="#faqs" class="block text-lg text-gray-300 hover:bg-indigo-600 rounded-lg px-4 py-4">FAQs</a>
                 </div>
             </nav>
         </div>
@@ -104,17 +124,15 @@
                     🔧 New · Effortlessly Preview Your Sites! →
                 </div>
                 <!-- Title -->
-                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight text-white">
-                    Instantly Create Temporary Preview Links
+                <h1 class="text-3xl md:text-5xl font-extrabold leading-tight text-white">
+                    Instantly Create Site Preview Links
                 </h1>
                 <!-- Description -->
                 <p class="mt-6 text-lg text-gray-400">
-                    Previewsites.dev is your go-to tool for generating temporary link previews of websites that have successfully migrated to a new server. Simply input your domain and the new IP address, and instantly access a live preview of your site. This powerful tool eliminates the need to modify your local /etc/hosts file, streamlining your workflow and saving you time. Perfect for developers and teams looking to verify migrations or showcase changes without complications.
-                </p>
+                    PreviewSites.dev offers a seamless preview site solution for websites during server migrations. No more /etc/hosts modifications needed - simply enter your domain and new IP address to generate an instant site preview link. Our preview site tool streamlines the migration verification process, making it the perfect alternative to traditional /etc/hosts editing. Ideal for developers and teams who need quick, secure website previews before DNS changes.                </p>
                 <!-- Buttons -->
                 <div class="mt-8 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:justify-center md:justify-center lg:justify-start">
-                    <a href="#how-to" class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-600">How to Use</a>
-                    <a href="#features" class="bg-transparent border border-gray-700 text-gray-400 px-6 py-3 rounded-lg font-medium hover:text-white hover:border-white">Features</a>
+                    <a href="#preview" class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-600">Generate Preview Site</a>
                 </div>
             </div>
         </div>
@@ -125,7 +143,7 @@
         <div class="section-container">
 
             <!-- Form Generate Preview Site Link -->
-            <div class="bg-indigo-950 text-white p-8 rounded-2xl shadow-lg max-w-lg w-full mx-auto md:max-w-6xl">
+            <div class="bg-indigo-950 text-white p-8 rounded-2xl shadow-lg max-w-lg w-full mx-auto md:max-w-6xl" id="preview">
                 <!-- <h1 class="text-2xl font-bold mb-4">Generate Your Preview Site Link</h1> -->
                 <form class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     <div class="flex flex-col items-start">
@@ -260,7 +278,7 @@
             </section>
 
             <!-- Section FAQs -->
-            <section class="text-white py-24 sm:py-24">
+            <section class="text-white py-24 sm:py-24" id="faqs">
                 <div class="mx-auto max-w-7xl px-6 lg:px-8">
                   <div class="mx-auto max-w-2xl text-center">
                     <h2 class="text-base font-semibold text-indigo-400">FAQ</h2>
@@ -412,6 +430,17 @@
                 },
             });
         };
+
+        // Just keep the mobile menu handling for anchor clicks
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function () {
+                // If mobile menu is open, close it after clicking
+                if (window.innerWidth < 768) {
+                    mobileNavbar.classList.add('hidden');
+                    menuToggle.classList.remove('active');
+                }
+            });
+        });
     </script>
 </body>
 </html>

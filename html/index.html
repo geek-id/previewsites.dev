@@ -3,6 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NJT5P1KGQ2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-NJT5P1KGQ2');
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PreviewSites.dev | Best Alternative to /etc/hosts for Site Preview</title>
     <meta name="description" content="Generate instant site preview links without modifying /etc/hosts. The perfect preview site solution for testing websites before DNS changes. Try our /etc/hosts alternative now!">
@@ -26,6 +35,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Cloudflare Turnstile JS -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style type="text/tailwindcss">
         @layer utilities {
             .hamburger-toggle div {
@@ -143,15 +153,14 @@
         <div class="section-container">
 
             <!-- Form Generate Preview Site Link -->
-            <div class="bg-indigo-950 text-white p-8 rounded-2xl shadow-lg max-w-lg w-full mx-auto md:max-w-6xl" id="preview">
-                <!-- <h1 class="text-2xl font-bold mb-4">Generate Your Preview Site Link</h1> -->
-                <form class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div class="bg-indigo-950 text-white p-8 rounded-2xl shadow-lg max-w-lg w-full mx-auto md:max-w-7xl" id="preview">
+                <form id="previewForm" class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                     <div class="flex flex-col items-start">
                         <label for="domain" class="flex items-center text-lg font-medium mb-3">
                             <i class="fas fa-globe mr-2"></i>
                             Domain Name
                         </label>
-                        <input type="text" id="domain" placeholder="previewsites.dev" class="w-full bg-white text-gray-200 placeholder-gray-400 p-3 rounded-md outline-none focus:ring-2 focus:ring-indigo-500 mb-4" onfocus="this.classList.add('text-black')" onblur="if(!this.value) this.classList.remove('text-black')" />
+                        <input type="text" id="domain" name="domain" placeholder="previewsites.dev" class="w-full bg-white text-gray-200 placeholder-gray-400 p-3 rounded-md outline-none focus:ring-2 focus:ring-indigo-500 mb-4" onfocus="this.classList.add('text-black')" onblur="if(!this.value) this.classList.remove('text-black')" />
                     </div>
 
                     <div class="flex flex-col items-start">
@@ -160,14 +169,25 @@
                             <span class="inline-flex items-center bg-indigo-500 text-white text-xs px-2 py-0.5 rounded-full mr-1">New</span>
                             IP Server
                         </label>
-                        <input type="text" id="ip" placeholder="192.168.10.119" class="w-full bg-white text-gray-200 placeholder-gray-400 p-3 rounded-md outline-none focus:ring-2 focus:ring-indigo-500 mb-4" onfocus="this.classList.add('text-black')" onblur="if(!this.value) this.classList.remove('text-black')" />
+                        <input 
+                            type="text" 
+                            id="ip" 
+                            name="ip" 
+                            placeholder="192.168.10.119" 
+                            class="w-full bg-white text-gray-200 placeholder-gray-400 p-3 rounded-md outline-none focus:ring-2 focus:ring-indigo-500 mb-1" 
+                            onfocus="this.classList.add('text-black')" 
+                            onblur="validateIP(this)"
+                        />
+                        <span id="ipError" class="text-red-500 text-sm hidden mb-3"></span>
                     </div>
+                    
                     <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-8 rounded-md shadow-md transition-all mt-10 mb-8">Submit</button>
+                    <input type="hidden" id="cf-turnstile-response" name="cf-turnstile-response">
+                    <div id="turnstile-container" class="flex flex-col items-start mb-3 mt-7" data-size="flexible"></div>
+                     
                 </form>
-                <!-- Turnstile Container -->
-                <div id="turnstile-container" class="flex flex-col items-start mb-4"></div>
 
-                <div id="result" class="result"></div>
+                <div id="result" class="result text-center justify-items-center"></div>
             </div>
 
             <!-- Section How to use -->
@@ -175,9 +195,9 @@
                 <div class="mx-auto max-w-7xl px-6 lg:px-8">
                   <div class="mx-auto max-w-2xl lg:text-center">
                     <h2 class="text-4xl font-semibold tracking-tight sm:text-5xl">How to Use PreviewSites.dev</h2>
-                    <p class="mt-2 text-lg/8 text-gray-400">Easily generate a <strong>site preview</strong> after migration to verify your website before final deployment.</p>
+                    <p class="mt-6 text-lg/8 text-gray-400">Create instant <strong>website previews</strong> without modifying /etc/hosts. Our <strong>preview site</strong> tool makes testing migrations simple and secure.</p>
                   </div>
-                  <div class="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-700 pt-10 sm:mt-8 sm:pt-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+                  <div class="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-700 pt-10 sm:mt-16 sm:pt-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
                     
                     <!-- Step 1 -->
                     <article class="flex max-w-xl flex-col items-start justify-between">
@@ -187,19 +207,18 @@
                       </div>
                     </article>
                     
-                    <!-- Step 2 -->
                     <article class="flex max-w-xl flex-col items-start justify-between">
                       <div class="group relative">
-                        <h3 class="mt-3 text-lg font-semibold">Step 2: Click "Generate Preview"</h3>
-                        <p class="mt-5 text-sm text-gray-400">Click the "Submit" button, and within seconds, you will receive a temporary <strong>tools site preview</strong> link.</p>
+                        <h3 class="mt-3 text-lg font-semibold">Step 2: Get Your Preview Site Link</h3>
+                        <p class="mt-5 text-sm text-gray-400">Click "Submit" to instantly generate your secure <strong>preview site</strong> link. No more editing /etc/hosts files - just one click for instant <strong>website preview</strong> access.</p>
                       </div>
                     </article>
                     
                     <!-- Step 3 -->
                     <article class="flex max-w-xl flex-col items-start justify-between">
                       <div class="group relative">
-                        <h3 class="mt-3 text-lg font-semibold">Step 3: Verify & Test Your Site</h3>
-                        <p class="mt-5 text-sm text-gray-400">Use the provided <strong>site preview migration</strong> link to test your website. The preview link is active for 3 hours.</p>
+                        <h3 class="mt-3 text-lg font-semibold">Step 3: Test Your Site Preview</h3>
+                        <p class="mt-5 text-sm text-gray-400">Access your temporary <strong>preview site</strong> link to verify your website. Unlike traditional <strong>/etc/hosts</strong> methods, our <strong>website preview</strong> links work instantly across all devices.</p>
                       </div>
                     </article>
                     
@@ -209,7 +228,6 @@
 
             <!-- Section features of previewsites.dev -->
             <section class="text-white py-24 sm:py-8 relative" id="features">
-                <!-- <div class="absolute inset-0 bg-indigo-500 opacity-50 blur-3xl pointer-events-none z-0"></div> -->
                 <div class="absolute inset-0 bg-gradient-to-b from-indigo-700 via-indigo-400 to-purple-700 opacity-70 blur-3xl pointer-events-none z-0"></div>
                 <div class="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
                   <div class="mx-auto max-w-3xl lg:text-center">
@@ -225,52 +243,44 @@
                       <div class="relative pl-16">
                         <dt class="text-lg font-semibold">
                           <div class="absolute top-0 left-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
-                            <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825a4.5 4.5 0 01-6.375-6.375l2.25-2.25a4.5 4.5 0 016.375 6.375l-2.25 2.25zM10.125 5.175a4.5 4.5 0 016.375 6.375l-2.25 2.25a4.5 4.5 0 01-6.375-6.375l2.25-2.25z" />
-                            </svg>
+                            <i class="fa-solid fa-link"></i>
                           </div>
-                          Instant Preview Links
+                          Instant Preview Site Links
                         </dt>
-                        <dd class="mt-2 text-gray-400">Generate a temporary preview link in seconds, allowing you and your clients to verify a successful website migration.</dd>
+                        <dd class="mt-2 text-gray-400">Create instant preview site links in seconds. Perfect for quick testing and client demonstrations before DNS changes go live.</dd>
                       </div>
               
                       <!-- Feature 2 -->
                       <div class="relative pl-16">
                         <dt class="text-lg font-semibold">
                           <div class="absolute top-0 left-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
-                            <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 19.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v10.5a2.25 2.25 0 0 0 2.25 2.25Z" />
-                            </svg>
+                            <i class="fa-solid fa-lock"></i>
                           </div>
-                          No /etc/hosts Modification
+                          Secure & Time-Limited Access
                         </dt>
-                        <dd class="mt-2 text-gray-400">No need to modify your local /etc/hosts file—simply generate and share a preview link for hassle-free testing.</dd>
+                        <dd class="mt-2 text-gray-400">Every preview site link is SSL-secured and automatically expires after 3 hours, ensuring your testing environment stays private and secure.</dd>
                       </div>
               
                       <!-- Feature 3 -->
                       <div class="relative pl-16">
                         <dt class="text-lg font-semibold">
                           <div class="absolute top-0 left-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
-                            <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5h15M4.5 10.5l3 3m-3-3 3-3m9 3l-3 3m3-3-3-3" />
-                            </svg>
+                            <i class="fa-solid fa-code"></i>
                           </div>
-                          Automatic Expiration
+                          Zero /etc/hosts Changes
                         </dt>
-                        <dd class="mt-2 text-gray-400">Preview links are active for 3 hours and automatically expire, ensuring security and minimal maintenance.</dd>
+                        <dd class="mt-2 text-gray-400">Skip the hassle of editing /etc/hosts files. Our preview site solution works instantly across all devices without local modifications.</dd>
                       </div>
               
                       <!-- Feature 4 -->
                       <div class="relative pl-16">
                         <dt class="text-lg font-semibold">
                         <div class="absolute top-0 left-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
-                            <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75V18m0 0 3-3m-3 3-3-3" />
-                            </svg>
+                            <i class="fa-solid fa-share-nodes"></i>
                         </div>
-                        SSL Secured Links
+                        Shareable Preview Links
                         </dt>
-                        <dd class="mt-2 text-gray-400">Every preview link is protected with SSL encryption, ensuring your preview site remains secure.</dd>
+                        <dd class="mt-2 text-gray-400">Share preview site links with your team or clients. Everyone can access the preview without technical setup or configuration.</dd>
                       </div>
                     </dl>
                   </div>
@@ -286,55 +296,146 @@
                     <p class="mt-6 text-lg text-gray-400">Find answers to common questions about PreviewSites.dev.</p>
                   </div>
                   
-                  <div class="mx-auto mt-16 max-w-4xl">
+                  <div class="mx-auto mt-16 max-w-4xl" x-data="{ activeTab: null }">
                     <dl class="space-y-6">
-                      
                       <!-- FAQ 1 -->
-                      <div>
-                        <dt class="text-lg font-semibold cursor-pointer" @click="openFaq1 = !openFaq1">
-                          <span class="text-indigo-400">&#10148;</span> What is PreviewSites.dev?
+                      <div class="border-b border-gray-700">
+                        <dt class="text-lg font-semibold cursor-pointer p-4 flex items-center justify-between" 
+                            @click="activeTab = activeTab === 1 ? null : 1">
+                          <div class="flex items-center">
+                            <span class="text-indigo-400 mr-2">&#10148;</span>
+                            What is PreviewSites.dev's site preview tool?
+                          </div>
+                          <svg class="w-6 h-6 transform transition-transform duration-200" 
+                               :class="{'rotate-180': activeTab === 1}"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg>
                         </dt>
-                        <dd x-show="openFaq1" class="mt-2 text-gray-400">PreviewSites.dev is a tool that generates temporary preview links for websites after migration, allowing you and your clients to test without changing local configurations.</dd>
+                        <dd class="mt-2 text-gray-400 overflow-hidden transition-all duration-300 max-h-0"
+                            :class="{'max-h-96 pb-4 px-4': activeTab === 1}"
+                            x-show="activeTab === 1"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 transform -translate-y-2"
+                            x-transition:enter-end="opacity-100 transform translate-y-0">
+                          PreviewSites.dev is a powerful site preview generator that creates temporary preview links for websites during migration. Our preview site solution helps developers and clients test websites without modifying local configurations.
+                        </dd>
                       </div>
                       
                       <!-- FAQ 2 -->
-                      <div>
-                        <dt class="text-lg font-semibold cursor-pointer" @click="openFaq2 = !openFaq2">
-                          <span class="text-indigo-400">&#10148;</span> How long does a preview link remain active?
+                      <div class="border-b border-gray-700">
+                        <dt class="text-lg font-semibold cursor-pointer p-4 flex items-center justify-between"
+                            @click="activeTab = activeTab === 2 ? null : 2">
+                          <div class="flex items-center">
+                            <span class="text-indigo-400 mr-2">&#10148;</span>
+                            How long can I use my preview site link?
+                          </div>
+                          <svg class="w-6 h-6 transform transition-transform duration-200"
+                               :class="{'rotate-180': activeTab === 2}"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg>
                         </dt>
-                        <dd x-show="openFaq2" class="mt-2 text-gray-400">Preview links are active for 3 hours and are automatically removed after expiration.</dd>
+                        <dd class="mt-2 text-gray-400 overflow-hidden transition-all duration-300 max-h-0"
+                            :class="{'max-h-96 pb-4 px-4': activeTab === 2}"
+                            x-show="activeTab === 2"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 transform -translate-y-2"
+                            x-transition:enter-end="opacity-100 transform translate-y-0">
+                          Each site preview link remains active for 3 hours, giving you ample time to test and verify your website. After expiration, you can generate a new preview site link instantly.
+                        </dd>
                       </div>
-                      
-                      <!-- FAQ 3 -->
-                      <div>
-                        <dt class="text-lg font-semibold cursor-pointer" @click="openFaq3 = !openFaq3">
-                          <span class="text-indigo-400">&#10148;</span> Do I need to modify my /etc/hosts file?
+
+                      <!-- Continue the same pattern for FAQ 3-6 -->
+                      <div class="border-b border-gray-700">
+                        <dt class="text-lg font-semibold cursor-pointer p-4 flex items-center justify-between"
+                            @click="activeTab = activeTab === 3 ? null : 3">
+                          <div class="flex items-center">
+                            <span class="text-indigo-400 mr-2">&#10148;</span> 
+                            How does the site preview work without /etc/hosts?
+                          </div>
+                          <svg class="w-6 h-6 transform transition-transform duration-200"
+                               :class="{'rotate-180': activeTab === 3}"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg>
                         </dt>
-                        <dd x-show="openFaq3" class="mt-2 text-gray-400">No, you can generate a preview link and share it directly without modifying your local /etc/hosts file.</dd>
+                        <dd class="mt-2 text-gray-400 overflow-hidden transition-all duration-300 max-h-0"
+                            :class="{'max-h-96 pb-4 px-4': activeTab === 3}"
+                            x-show="activeTab === 3"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 transform -translate-y-2"
+                            x-transition:enter-end="opacity-100 transform translate-y-0">
+                            Our preview site technology eliminates the need for /etc/hosts modifications. Simply enter your domain and IP to get an instant site preview link - no local file changes required.
+                          </dd>
                       </div>
                       
                       <!-- FAQ 4 -->
-                      <div>
-                        <dt class="text-lg font-semibold cursor-pointer" @click="openFaq4 = !openFaq4">
-                          <span class="text-indigo-400">&#10148;</span> Are the preview links secure?
+                      <div class="border-b border-gray-700">
+                        <dt class="text-lg font-semibold cursor-pointer p-4 flex items-center justify-between"
+                            @click="activeTab = activeTab === 4 ? null : 4">
+                          <div class="flex items-center">
+                            <span class="text-indigo-400 mr-2">&#10148;</span> 
+                            Is my preview site connection secure?
+                          </div>
+                          <svg class="w-6 h-6 transform transition-transform duration-200"
+                               :class="{'rotate-180': activeTab === 4}"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg>
                         </dt>
-                        <dd x-show="openFaq4" class="mt-2 text-gray-400">Yes, all preview links are SSL-secured, ensuring encrypted and safe connections.</dd>
+                        <dd class="mt-2 text-gray-400 overflow-hidden transition-all duration-300 max-h-0"
+                            :class="{'max-h-96 pb-4 px-4': activeTab === 4}"
+                            x-show="activeTab === 4"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 transform -translate-y-2"
+                            x-transition:enter-end="opacity-100 transform translate-y-0">
+                            Yes, every preview site link is protected with SSL encryption, ensuring your site preview testing remains private and secure throughout the session.</dd>
                       </div>
                       
                       <!-- FAQ 5 -->
-                      <div>
-                        <dt class="text-lg font-semibold cursor-pointer" @click="openFaq5 = !openFaq5">
-                          <span class="text-indigo-400">&#10148;</span> Who can access the preview link?
+                      <div class="border-b border-gray-700">
+                        <dt class="text-lg font-semibold cursor-pointer p-4 flex items-center justify-between"
+                            @click="activeTab = activeTab === 5 ? null : 5">
+                          <div class="flex items-center">
+                            <span class="text-indigo-400 mr-2">&#10148;</span> 
+                            Can I share my site preview with others?
+                          </div>
+                          <svg class="w-6 h-6 transform transition-transform duration-200"
+                               :class="{'rotate-180': activeTab === 5}"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg> 
                         </dt>
-                        <dd x-show="openFaq5" class="mt-2 text-gray-400">Anyone with the generated preview link can access the temporary preview site.</dd>
+                        <dd class="mt-2 text-gray-400 overflow-hidden transition-all duration-300 max-h-0"
+                            :class="{'max-h-96 pb-4 px-4': activeTab === 5}"
+                            x-show="activeTab === 5"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 transform -translate-y-2"
+                            x-transition:enter-end="opacity-100 transform translate-y-0">
+                            Yes, you can share your preview site link with team members and clients. Anyone with the link can access the temporary site preview during its active period.</dd>
                       </div>
                       
                       <!-- FAQ 6 -->
-                      <div>
-                        <dt class="text-lg font-semibold cursor-pointer" @click="openFaq6 = !openFaq6">
-                          <span class="text-indigo-400">&#10148;</span> Is PreviewSites.dev open-source?
+                      <div class="border-b border-gray-700">
+                        <dt class="text-lg font-semibold cursor-pointer p-4 flex items-center justify-between"
+                            @click="activeTab = activeTab === 6 ? null : 6">
+                            <div class="flex items-center">
+                              <span class="text-indigo-400 mr-2">&#10148;</span> Is PreviewSites.dev free to use?
+                            </div>
+                            <svg class="w-6 h-6 transform transition-transform duration-200"
+                                :class="{'rotate-180': activeTab === 6}"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg> 
                         </dt>
-                        <dd x-show="openFaq6" class="mt-2 text-gray-400">Yes, PreviewSites.dev is an open-source project designed to help developers test migrations seamlessly.</dd>
+                        <dd class="mt-2 text-gray-400 overflow-hidden transition-all duration-300 max-h-0"
+                            :class="{'max-h-96 pb-4 px-4': activeTab === 6}"
+                            x-show="activeTab === 6"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 transform -translate-y-2"
+                            x-transition:enter-end="opacity-100 transform translate-y-0">
+                            Yes, PreviewSites.dev is completely free to use. Generate unlimited preview site links without any cost or subscription required.</dd>
                       </div>
                     </dl>
                   </div>
@@ -347,25 +448,24 @@
     <section class="relative bg-black text-white py-12">
         <!-- Indigo Blur Effect -->
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-700 via-purple-700 to-transparent opacity-70 blur-3xl pointer-events-none"></div>
-        <!-- <div class="absolute inset-0 bg-indigo-500 opacity-30 blur-3xl"></div> -->
     
         <div class="relative mx-auto max-w-7xl px-6 lg:px-8 text-center">
         <p class="text-lg">&copy; 2025 PreviewSites.dev. All rights reserved.</p>
         <p class="mt-2 text-sm">Made with ❤️ and Tailwind CSS.</p>
         <div class="flex justify-center mt-6 space-x-6">
-            <a href="mailto:contact@previewsites.dev" class="text-white hover:text-gray-300">
+            <a href="mailto:hello@agemcloud.com" class="text-white hover:text-gray-300">
             <span class="sr-only">Email</span>
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 6.03A2 2 0 012 6h20a2 2 0 011.99 2.03L12 13.48 2.01 8.03z"/><path d="M22 8.82v8.18c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V8.82l10 5.99 10-5.99z"/></svg>
             </a>
-            <a href="https://github.com/previewsites" class="text-white hover:text-gray-300">
+            <a href="https://github.com/geek-id" class="text-white hover:text-gray-300">
             <span class="sr-only">GitHub</span>
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.21.66-.48v-1.7c-2.78.6-3.36-1.34-3.36-1.34-.45-1.15-1.1-1.46-1.1-1.46-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.02-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03A9.56 9.56 0 0112 6.84c.85.01 1.71.11 2.5.34 1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.63.7 1.02 1.59 1.02 2.68 0 3.85-2.34 4.7-4.56 4.95.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48A10.01 10.01 0 0022 12c0-5.52-4.48-10-10-10z" clip-rule="evenodd"/></svg>
             </a>
-            <a href="https://x.com/previewsites" class="text-white hover:text-gray-300">
+            <a href="https://x.com/buruh_serabutan" class="text-white hover:text-gray-300">
             <span class="sr-only">X (Twitter)</span>
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.25c7.55 0 11.67-6.25 11.67-11.68 0-.18 0-.36-.01-.53a8.35 8.35 0 002.04-2.12 8.2 8.2 0 01-2.36.65 4.11 4.11 0 001.8-2.27 8.23 8.23 0 01-2.6.99 4.1 4.1 0 00-6.99 3.74 11.66 11.66 0 01-8.46-4.29 4.1 4.1 0 001.27 5.47A4.07 4.07 0 012.8 9.71v.05a4.1 4.1 0 003.29 4.02 4.1 4.1 0 01-1.85.07 4.1 4.1 0 003.83 2.85 8.23 8.23 0 01-5.1 1.76 8.2 8.2 0 01-.97-.06 11.65 11.65 0 006.29 1.84"/></svg>
             </a>
-            <a href="https://linkedin.com/company/previewsites" class="text-white hover:text-gray-300">
+            <a href="https://linkedin.com/in/geekid" class="text-white hover:text-gray-300">
             <span class="sr-only">LinkedIn</span>
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M4.98 3.5c0 1.38-1.1 2.5-2.48 2.5S0 4.88 0 3.5C0 2.12 1.1 1 2.5 1s2.48 1.12 2.48 2.5zM0 23h5V8H0v15zm7 0h5v-7.5c0-1.74.04-3.96 2.42-3.96 2.38 0 2.4 1.86 2.4 3.83V23h5V13c0-4.78-2.54-7-5.92-7-2.67 0-3.9 1.48-4.57 2.51V8H7v15z"/></svg>
             </a>
@@ -373,7 +473,32 @@
         </div>
     </section>
 
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="fixed bottom-8 right-8 bg-indigo-700 hover:bg-indigo-800 text-white rounded-lg p-3 shadow-lg transition-all duration-300 opacity-0 invisible">
+      <i class="fas fa-arrow-up text-xl"></i>
+    </button>
+
     <script>
+        // Scroll to Top Button functionality
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollToTopBtn.classList.remove('opacity-0', 'invisible');
+                scrollToTopBtn.classList.add('opacity-100', 'visible');
+            } else {
+                scrollToTopBtn.classList.add('opacity-0', 'invisible');
+                scrollToTopBtn.classList.remove('opacity-100', 'visible');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
         // Menu Toggle
         const menuToggle = document.getElementById('toggleMenu');
         const mobileNavbar = document.getElementById('mobile-navbar');
@@ -395,17 +520,67 @@
         const form = document.getElementById('previewForm');
         const resultDiv = document.getElementById('result');
 
+        function validateIP(input) {
+            const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
+            const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^(([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}$/;
+            
+            const errorElement = document.getElementById('ipError');
+            const value = input.value.trim();
+
+            if (!value) {
+                if(!input.value) input.classList.remove('text-black');
+                errorElement.classList.add('hidden');
+                return true;
+            }
+
+            if (ipv4Regex.test(value)) {
+                // Additional validation for IPv4 values
+                const parts = value.split('.');
+                const isValid = parts.every(part => {
+                    const num = parseInt(part, 10);
+                    return num >= 0 && num <= 255;
+                });
+
+                if (isValid) {
+                    errorElement.classList.add('hidden');
+                    return true;
+                }
+            } else if (ipv6Regex.test(value)) {
+                errorElement.classList.add('hidden');
+                return true;
+            }
+
+            // Show error if neither IPv4 nor IPv6 format is valid
+            errorElement.textContent = "Please enter a valid IPv4 or IPv6 address";
+            errorElement.classList.remove('hidden');
+            return false;
+        }
+
         form.onsubmit = async (e) => {
             e.preventDefault();
+            
+            const ipInput = document.getElementById('ip');
+            if (!validateIP(ipInput)) {
+                resultDiv.innerHTML = "❌ Please enter a valid IP address";
+                resultDiv.style.display = "block";
+                return false; // Stop form submission
+            }
+
+            // Retrieve values from input fields
+            const domain = document.getElementById('domain').value;
+            const ip = ipInput.value;
+            // Turnstile Container
+            const token = document.getElementById('cf-turnstile-response').value;
+
+            // Check for missing values
+            if (!domain || !ip) {
+                resultDiv.innerHTML = "❌ Domain and IP are required.";
+                resultDiv.style.display = "block";
+                return false; // Stop form submission
+            }
+
             resultDiv.style.display = "none";
             resultDiv.innerHTML = "⏳ Generating preview...";
-
-            const token = document.getElementById('cf-turnstile-response').value;
-            if (!token) {
-                resultDiv.innerHTML = "❌ Turnstile verification failed. Please complete the challenge.";
-                resultDiv.style.display = "block";
-                return;
-            }
 
             const formData = new FormData(form);
             formData.append('turnstile_response', token);
@@ -415,8 +590,13 @@
                 body: formData
             });
 
-            const text = await response.text();
-            resultDiv.innerHTML = "✅ " + text;
+            if (!response.ok) {
+                const errorText = await response.text();
+                resultDiv.innerHTML = "❌ " + errorText;
+            } else {
+                const text = await response.text();
+                resultDiv.innerHTML = text;
+            }
             resultDiv.style.display = "block";
         };
 

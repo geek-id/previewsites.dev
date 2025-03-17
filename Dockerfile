@@ -1,5 +1,5 @@
 # Base image with Nginx and Lua support
-FROM openresty/openresty:latest
+FROM --platform=linux/amd64 openresty/openresty:latest
 
 # Install necessary tools (e.g Lua modules)
 RUN apt-get install -y curl \

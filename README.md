@@ -14,9 +14,6 @@
   - Automatically generate temporary subdomains for previews, expiring after a set time (default: 3 hours).
   - Configurable expiration time to control the preview duration.
 
-- **Cloudflare Integration**:
-  - Automatically create subdomains on Cloudflare and remove them when the preview expires.
-
 - **Efficient Storage with Lua Shared Dictionary**:
   - Use Lua's shared memory for managing subdomain-to-IP mappings efficiently, avoiding the need for external databases.
 
@@ -38,10 +35,6 @@
 2. **HTML Form Interface**:
    - A simple, responsive web form (`index.html`) allows users to input the domain and IP for preview creation.
    - The form integrates seamlessly with Lua to handle requests and set expiration timers.
-
-3. **Cloudflare API Integration**:
-   - Automates DNS record creation and deletion for temporary subdomains.
-   - Ensures a smooth process for previewing sites under custom subdomains.
 
 ---
 

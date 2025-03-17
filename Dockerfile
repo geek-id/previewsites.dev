@@ -22,4 +22,5 @@ COPY html /usr/local/openresty/nginx/html
 EXPOSE 80
 
 # Start nginx when the container starts
-CMD [ "/usr/local/openresty/nginx/sbin/nginx", "-g", "daemon off;" ]
+# CMD [ "/usr/local/openresty/nginx/sbin/nginx", "-g", "daemon off;" ]
+CMD [ "sh", "-c", "adduser --disabled-password --no-create-home nobody && /usr/local/openresty/nginx/sbin/nginx -g 'daemon off;'" ]

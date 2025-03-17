@@ -2,7 +2,9 @@
 FROM --platform=linux/amd64 openresty/openresty:alpine
 
 # Install necessary tools (e.g Lua modules)
-RUN apk add --no-cache curl ca-certificates unzip luarocks && \
+RUN apk add --no-cache curl ca-certificates unzip && \
+    apk add --no-cache luarocks && \
+    ln -sf /usr/bin/luarocks /usr/local/bin/luarocks && \
     luarocks install lua-cjson && \
     luarocks install lua-resty-http && \
     rm -rf /var/cache/apk/*

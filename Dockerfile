@@ -1,11 +1,11 @@
 # Base image with Nginx and Lua support
-FROM --platform=linux/amd64 openresty/openresty:latest
+FROM --platform=linux/amd64 openresty/openresty:alpine
 
 # Install necessary tools (e.g Lua modules)
-RUN apt-get install -y curl \
-    ca-certificates curl unzip luarocks \
-    && luarocks install lua-cjson \
-    && luarocks install lua-resty-http
+RUN apk add --no-cache curl ca-certificates unzip luarocks && \
+    luarocks install lua-cjson && \
+    luarocks install lua-resty-http && \
+    rm -rf /var/cache/apk/*
 
 # Set working directory
 WORKDIR /usr/local/openresty/nginx

@@ -2,7 +2,7 @@
 FROM openresty/openresty:latest
 
 # Install necessary tools (e.g Lua modules)
-RUN apt-get update && apt-get install -y curl \
+RUN apt-get install -y curl \
     ca-certificates curl unzip luarocks \
     && luarocks install lua-cjson \
     && luarocks install lua-resty-http

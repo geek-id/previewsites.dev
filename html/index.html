@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NJT5P1KGQ2"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id={G-TAG_ID}"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-NJT5P1KGQ2');
+      gtag('config', 'G-TAG_ID');
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PreviewSites.dev | Best Alternative to /etc/hosts for Site Preview</title>
@@ -595,7 +595,7 @@
         // Render Cloudflare Turnstile
         window.onload = function() {
             turnstile.render('#turnstile-container', {
-                sitekey: '0x4AAAAAAA8-9yqendx2ylWx',
+                sitekey: '{CF_TURNSTILE_SITEKEY}',
                 theme: 'light',
                 callback: function (token) {
                     document.getElementById('cf-turnstile-response').value = token;

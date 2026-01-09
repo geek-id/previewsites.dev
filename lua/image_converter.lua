@@ -42,44 +42,91 @@ end
 
 -- Convert image using libvips (preferred method)
 local function convert_with_vips(input_path, output_path)
+    -- Check if vips command exists
+    local check_cmd = "which vips >/dev/null 2>&1"
+    local check_result = os.execute(check_cmd)
+    if not check_result then
+        ngx.log(ngx.WARN, "[WEBP] vips command not found")
+        return false, "vips command not found"
+    end
+    
     -- Remove existing file if any (to avoid permission issues)
     os.execute(string.format("rm -f '%s' 2>/dev/null", output_path))
     
     -- libvips command: vips webpsave input.jpg output.webp [--quality=85]
+    -- Note: vips webpsave syntax is: vips webpsave input output [options]
     local cmd = string.format("vips webpsave '%s' '%s' --quality=85 2>&1", input_path, output_path)
+    ngx.log(ngx.INFO, "[WEBP] Executing vips command: ", cmd)
     local handle = io.popen(cmd)
     if handle then
         local result = handle:read("*a")
         local exit_code = handle:close()
+        ngx.log(ngx.INFO, "[WEBP] Vips exit code: ", tostring(exit_code))
+        if result and result ~= "" then
+            ngx.log(ngx.INFO, "[WEBP] Vips output: ", result)
+        end
+        
         -- Check if conversion was successful
-        -- io.popen returns true on success, or nil/false on failure
-        if exit_code and file_exists(output_path) then
-            return true, nil
+        -- io.popen returns true on success (exit code 0), or nil/false on failure
+        -- In Lua, exit_code is true if command succeeded (exit 0)
+        if exit_code == true or exit_code == 0 then
+            if file_exists(output_path) then
+                ngx.log(ngx.INFO, "[WEBP] Vips conversion successful")
+                return true, nil
+            else
+                ngx.log(ngx.ERR, "[WEBP] Vips reported success but file not found: ", output_path)
+                return false, "Output file not created"
+            end
         else
+            ngx.log(ngx.ERR, "[WEBP] Vips conversion failed. Exit code: ", tostring(exit_code), ", Output: ", result or "none")
             return false, result or "vips conversion failed"
         end
     end
+    ngx.log(ngx.ERR, "[WEBP] Failed to execute vips command")
     return false, "Failed to execute vips command"
 end
 
 -- Convert image using ImageMagick (fallback method)
 local function convert_with_imagemagick(input_path, output_path)
+    -- Check if convert command exists
+    local check_cmd = "which convert >/dev/null 2>&1"
+    local check_result = os.execute(check_cmd)
+    if not check_result then
+        ngx.log(ngx.WARN, "[WEBP] convert command not found")
+        return false, "convert command not found"
+    end
+    
     -- Remove existing file if any (to avoid permission issues)
     os.execute(string.format("rm -f '%s' 2>/dev/null", output_path))
     
     -- ImageMagick command: convert input.jpg -quality 85 output.webp
     -- Use absolute path and ensure output directory is writable
     local cmd = string.format("convert '%s' -quality 85 '%s' 2>&1", input_path, output_path)
+    ngx.log(ngx.INFO, "[WEBP] Executing ImageMagick command: ", cmd)
     local handle = io.popen(cmd)
     if handle then
         local result = handle:read("*a")
         local exit_code = handle:close()
-        if exit_code and file_exists(output_path) then
-            return true, nil
+        ngx.log(ngx.INFO, "[WEBP] ImageMagick exit code: ", tostring(exit_code))
+        if result and result ~= "" then
+            ngx.log(ngx.INFO, "[WEBP] ImageMagick output: ", result)
+        end
+        
+        -- Check if conversion was successful
+        if exit_code == true or exit_code == 0 then
+            if file_exists(output_path) then
+                ngx.log(ngx.INFO, "[WEBP] ImageMagick conversion successful")
+                return true, nil
+            else
+                ngx.log(ngx.ERR, "[WEBP] ImageMagick reported success but file not found: ", output_path)
+                return false, "Output file not created"
+            end
         else
+            ngx.log(ngx.ERR, "[WEBP] ImageMagick conversion failed. Exit code: ", tostring(exit_code), ", Output: ", result or "none")
             return false, result or "ImageMagick conversion failed"
         end
     end
+    ngx.log(ngx.ERR, "[WEBP] Failed to execute convert command")
     return false, "Failed to execute convert command"
 end
 
@@ -122,8 +169,11 @@ end
 
 -- Main function to handle image conversion
 function _M.convert_image(uri)
+    ngx.log(ngx.INFO, "[WEBP] convert_image called with URI: ", uri)
+    
     -- Check if browser supports WEBP
     if not supports_webp() then
+        ngx.log(ngx.INFO, "[WEBP] Browser does not support WEBP")
         return nil, "Browser does not support WEBP"
     end
     

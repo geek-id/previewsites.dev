@@ -53,10 +53,6 @@ local function convert_with_vips(input_path, output_path)
     -- Remove existing file if any (to avoid permission issues)
     os.execute(string.format("rm -f '%s' 2>/dev/null", output_path))
     
-    -- libvips command: vips webpsave input.jpg output.webp
-    -- Note: vips webpsave only accepts 2 arguments (input and output)
-    -- Quality parameter is not supported in command line version
-    -- Default quality will be used (usually 75)
     local cmd = string.format("vips webpsave '%s' '%s' 2>&1", input_path, output_path)
     ngx.log(ngx.ERR, "[WEBP] Executing vips command: ", cmd)
     local handle = io.popen(cmd)

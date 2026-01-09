@@ -172,6 +172,37 @@ local function ensure_cache_dir()
     end
 end
 
+-- Convert image without browser check (for direct WEBP requests)
+function _M.convert_image_direct(original_path, webp_path)
+    ngx.log(ngx.ERR, "[WEBP] convert_image_direct called")
+    ngx.log(ngx.ERR, "[WEBP] Original: ", original_path)
+    ngx.log(ngx.ERR, "[WEBP] WEBP: ", webp_path)
+    
+    -- Ensure cache directory exists
+    ensure_cache_dir()
+    
+    -- Check if WEBP already exists
+    if file_exists(webp_path) then
+        ngx.log(ngx.ERR, "[WEBP] WEBP already exists: ", webp_path)
+        return webp_path, nil
+    end
+    
+    -- Convert to WEBP
+    ngx.log(ngx.ERR, "[WEBP] Converting: ", original_path, " -> ", webp_path)
+    local success = convert_to_webp(original_path, webp_path)
+    if success then
+        if file_exists(webp_path) then
+            ngx.log(ngx.ERR, "[WEBP] Conversion successful: ", webp_path)
+            return webp_path, nil
+        else
+            ngx.log(ngx.ERR, "[WEBP] Conversion reported success but file not found: ", webp_path)
+            return nil, "WEBP file not created after conversion"
+        end
+    else
+        return nil, "Conversion failed"
+    end
+end
+
 -- Main function to handle image conversion
 function _M.convert_image(uri)
     ngx.log(ngx.INFO, "[WEBP] convert_image called with URI: ", uri)

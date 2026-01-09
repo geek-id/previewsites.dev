@@ -42,6 +42,9 @@ end
 
 -- Convert image using libvips (preferred method)
 local function convert_with_vips(input_path, output_path)
+    -- Remove existing file if any (to avoid permission issues)
+    os.execute(string.format("rm -f '%s' 2>/dev/null", output_path))
+    
     -- libvips command: vips webpsave input.jpg output.webp [--quality=85]
     local cmd = string.format("vips webpsave '%s' '%s' --quality=85 2>&1", input_path, output_path)
     local handle = io.popen(cmd)
@@ -61,7 +64,11 @@ end
 
 -- Convert image using ImageMagick (fallback method)
 local function convert_with_imagemagick(input_path, output_path)
+    -- Remove existing file if any (to avoid permission issues)
+    os.execute(string.format("rm -f '%s' 2>/dev/null", output_path))
+    
     -- ImageMagick command: convert input.jpg -quality 85 output.webp
+    -- Use absolute path and ensure output directory is writable
     local cmd = string.format("convert '%s' -quality 85 '%s' 2>&1", input_path, output_path)
     local handle = io.popen(cmd)
     if handle then
@@ -99,7 +106,18 @@ end
 
 -- Ensure cache directory exists
 local function ensure_cache_dir()
-    os.execute(string.format("mkdir -p '%s' 2>/dev/null", cache_dir))
+    -- Create directory with proper permissions (777 for write access)
+    -- Also ensure parent directory (assets) is writable
+    local parent_dir = "/usr/local/openresty/nginx/html/assets"
+    local cmd1 = string.format("chmod 777 '%s' 2>/dev/null", parent_dir)
+    local cmd2 = string.format("mkdir -p '%s' && chmod -R 777 '%s' 2>/dev/null", cache_dir, cache_dir)
+    os.execute(cmd1)
+    local result = os.execute(cmd2)
+    if result ~= 0 then
+        ngx.log(ngx.ERR, "[WEBP] Failed to create cache directory: ", cache_dir)
+    else
+        ngx.log(ngx.DEBUG, "[WEBP] Cache directory ready: ", cache_dir)
+    end
 end
 
 -- Main function to handle image conversion
@@ -112,6 +130,7 @@ function _M.convert_image(uri)
     -- Extract filename from URI
     local filename = uri:match("([^/]+)$")
     if not filename then
+        ngx.log(ngx.ERR, "[WEBP] Invalid filename from URI: ", uri)
         return nil, "Invalid filename"
     end
     
@@ -128,8 +147,16 @@ function _M.convert_image(uri)
     
     -- Check if original file exists
     if not file_exists(original_path) then
-        return nil, "Original file not found"
+        ngx.log(ngx.ERR, "[WEBP] Original file not found: ", original_path)
+        return nil, "Original file not found: " .. original_path
     end
+    
+    -- Log paths for debugging
+    ngx.log(ngx.DEBUG, "[WEBP] Original path: ", original_path)
+    ngx.log(ngx.DEBUG, "[WEBP] WEBP path: ", webp_path)
+    
+    -- Ensure cache directory exists first
+    ensure_cache_dir()
     
     -- Check if WEBP already exists in cache
     if file_exists(webp_path) then
@@ -137,13 +164,18 @@ function _M.convert_image(uri)
         return webp_path, nil
     end
     
-    -- Ensure cache directory exists
-    ensure_cache_dir()
-    
     -- Convert to WEBP
+    ngx.log(ngx.INFO, "[WEBP] Converting image: ", original_path, " -> ", webp_path)
     local success = convert_to_webp(original_path, webp_path)
     if success then
-        return webp_path, nil
+        -- Verify the file was created
+        if file_exists(webp_path) then
+            ngx.log(ngx.INFO, "[WEBP] Conversion successful: ", webp_path)
+            return webp_path, nil
+        else
+            ngx.log(ngx.ERR, "[WEBP] Conversion reported success but file not found: ", webp_path)
+            return nil, "WEBP file not created after conversion"
+        end
     else
         return nil, "Conversion failed"
     end

@@ -93,26 +93,34 @@ local function convert_with_imagemagick(input_path, output_path)
         return false, "convert command not found"
     end
     
+    -- Ensure output directory exists and is writable
+    local output_dir = string.match(output_path, "^(.*)/")
+    if output_dir then
+        -- Create directory if not exists (permission should be set in Dockerfile/startup)
+        os.execute(string.format("/bin/sh -c 'mkdir -p %s' 2>/dev/null", output_dir))
+        ngx.log(ngx.ERR, "[WEBP] Ensured output directory exists: ", output_dir)
+    end
+    
     -- Remove existing file if any (to avoid permission issues)
     os.execute(string.format("rm -f '%s' 2>/dev/null", output_path))
     
     -- ImageMagick command: convert input.jpg -quality 85 output.webp
     -- Use absolute path and ensure output directory is writable
     local cmd = string.format("convert '%s' -quality 85 '%s' 2>&1", input_path, output_path)
-    ngx.log(ngx.INFO, "[WEBP] Executing ImageMagick command: ", cmd)
+    ngx.log(ngx.ERR, "[WEBP] Executing ImageMagick command: ", cmd)
     local handle = io.popen(cmd)
     if handle then
         local result = handle:read("*a")
         local exit_code = handle:close()
-        ngx.log(ngx.INFO, "[WEBP] ImageMagick exit code: ", tostring(exit_code))
+        ngx.log(ngx.ERR, "[WEBP] ImageMagick exit code: ", tostring(exit_code))
         if result and result ~= "" then
-            ngx.log(ngx.INFO, "[WEBP] ImageMagick output: ", result)
+            ngx.log(ngx.ERR, "[WEBP] ImageMagick output: ", result)
         end
         
         -- Check if conversion was successful
         if exit_code == true or exit_code == 0 then
             if file_exists(output_path) then
-                ngx.log(ngx.INFO, "[WEBP] ImageMagick conversion successful")
+                ngx.log(ngx.ERR, "[WEBP] ImageMagick conversion SUCCESS")
                 return true, nil
             else
                 ngx.log(ngx.ERR, "[WEBP] ImageMagick reported success but file not found: ", output_path)

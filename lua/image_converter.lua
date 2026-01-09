@@ -152,36 +152,22 @@ end
 
 -- Ensure cache directory exists
 local function ensure_cache_dir()
-    -- Create directory with proper permissions (777 for write access)
-    -- Use shell command to ensure both mkdir and chmod execute properly
+    -- Create directory (permission already set in Dockerfile)
+    -- Skip chmod if it fails (nginx worker may not have permission to chmod)
+    -- But directory should already be writable from Dockerfile
     ngx.log(ngx.ERR, "[WEBP] Ensuring cache directory exists: ", cache_dir)
     
-    -- Use /bin/sh -c to execute multiple commands
-    local cmd = string.format("/bin/sh -c 'mkdir -p %s && chmod 777 %s'", cache_dir, cache_dir)
-    local result = os.execute(cmd)
+    -- Just create directory if not exists (don't try to chmod)
+    -- Permission should already be set correctly in Dockerfile
+    local cmd = string.format("/bin/sh -c 'mkdir -p %s'", cache_dir)
+    os.execute(cmd)
     
-    -- Also ensure parent directory is writable
-    local parent_dir = "/usr/local/openresty/nginx/html/assets"
-    os.execute(string.format("/bin/sh -c 'chmod 777 %s'", parent_dir))
-    
-    -- Verify directory exists and check permission
+    -- Verify directory exists
     if file_exists(cache_dir) then
-        -- Try to test write permission by creating a test file
-        local test_file = cache_dir .. "/.write_test"
-        local test_cmd = string.format("/bin/sh -c 'touch %s && rm -f %s'", test_file, test_file)
-        local test_result = os.execute(test_cmd)
-        
-        if test_result then
-            ngx.log(ngx.ERR, "[WEBP] Cache directory ready and writable: ", cache_dir)
-            return true
-        else
-            ngx.log(ngx.ERR, "[WEBP] Cache directory exists but not writable: ", cache_dir)
-            -- Try to fix permission again
-            os.execute(string.format("/bin/sh -c 'chmod -R 777 %s'", cache_dir))
-            return true  -- Return true anyway, let conversion try
-        end
+        ngx.log(ngx.ERR, "[WEBP] Cache directory ready: ", cache_dir)
+        return true
     else
-        ngx.log(ngx.ERR, "[WEBP] Failed to create cache directory: ", cache_dir, ", result: ", tostring(result))
+        ngx.log(ngx.ERR, "[WEBP] Failed to create cache directory: ", cache_dir)
         return false
     end
 end

@@ -53,9 +53,11 @@ local function convert_with_vips(input_path, output_path)
     -- Remove existing file if any (to avoid permission issues)
     os.execute(string.format("rm -f '%s' 2>/dev/null", output_path))
     
-    -- libvips command: vips webpsave input.jpg output.webp Q=85
-    -- Note: vips webpsave uses Q=85 (not --quality=85)
-    local cmd = string.format("vips webpsave '%s' '%s' Q=85 2>&1", input_path, output_path)
+    -- libvips command: vips webpsave input.jpg output.webp
+    -- Note: vips webpsave only accepts 2 arguments (input and output)
+    -- Quality parameter is not supported in command line version
+    -- Default quality will be used (usually 75)
+    local cmd = string.format("vips webpsave '%s' '%s' 2>&1", input_path, output_path)
     ngx.log(ngx.ERR, "[WEBP] Executing vips command: ", cmd)
     local handle = io.popen(cmd)
     if handle then
@@ -131,18 +133,20 @@ end
 
 -- Convert image to WEBP
 local function convert_to_webp(input_path, output_path)
-    -- Try libvips first (faster and more efficient)
-    local success, err = convert_with_vips(input_path, output_path)
+    -- Use ImageMagick first (supports quality parameter)
+    -- libvips CLI doesn't support quality parameter, so we use ImageMagick
+    ngx.log(ngx.ERR, "[WEBP] Using ImageMagick for conversion (quality=85)")
+    local success, err = convert_with_imagemagick(input_path, output_path)
     if success then
-        ngx.log(ngx.INFO, "[WEBP] Converted using libvips: ", input_path)
+        ngx.log(ngx.ERR, "[WEBP] Converted using ImageMagick: ", input_path)
         return true
     end
     
-    -- Fallback to ImageMagick
-    ngx.log(ngx.WARN, "[WEBP] libvips failed, trying ImageMagick: ", err or "unknown error")
-    success, err = convert_with_imagemagick(input_path, output_path)
+    -- Fallback to libvips (without quality control, uses default ~75)
+    ngx.log(ngx.WARN, "[WEBP] ImageMagick failed, trying libvips (default quality): ", err or "unknown error")
+    success, err = convert_with_vips(input_path, output_path)
     if success then
-        ngx.log(ngx.INFO, "[WEBP] Converted using ImageMagick: ", input_path)
+        ngx.log(ngx.ERR, "[WEBP] Converted using libvips: ", input_path)
         return true
     end
     

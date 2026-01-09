@@ -233,15 +233,20 @@ end
 
 -- Serve converted image
 function _M.serve_webp(webp_path)
+    ngx.log(ngx.INFO, "[WEBP] Attempting to serve WEBP from: ", webp_path)
+    
     local file = io.open(webp_path, "rb")
     if not file then
+        ngx.log(ngx.WARN, "[WEBP] WEBP file not found: ", webp_path)
         ngx.status = ngx.HTTP_NOT_FOUND
-        ngx.say("WEBP file not found")
+        ngx.say("WEBP file not found: " .. webp_path)
         return
     end
     
     local content = file:read("*all")
     file:close()
+    
+    ngx.log(ngx.INFO, "[WEBP] Serving WEBP file, size: ", #content, " bytes")
     
     ngx.header.content_type = "image/webp"
     ngx.header.content_length = #content

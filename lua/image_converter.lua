@@ -53,25 +53,24 @@ local function convert_with_vips(input_path, output_path)
     -- Remove existing file if any (to avoid permission issues)
     os.execute(string.format("rm -f '%s' 2>/dev/null", output_path))
     
-    -- libvips command: vips webpsave input.jpg output.webp [--quality=85]
-    -- Note: vips webpsave syntax is: vips webpsave input output [options]
-    local cmd = string.format("vips webpsave '%s' '%s' --quality=85 2>&1", input_path, output_path)
-    ngx.log(ngx.INFO, "[WEBP] Executing vips command: ", cmd)
+    -- libvips command: vips webpsave input.jpg output.webp Q=85
+    -- Note: vips webpsave uses Q=85 (not --quality=85)
+    local cmd = string.format("vips webpsave '%s' '%s' Q=85 2>&1", input_path, output_path)
+    ngx.log(ngx.ERR, "[WEBP] Executing vips command: ", cmd)
     local handle = io.popen(cmd)
     if handle then
         local result = handle:read("*a")
         local exit_code = handle:close()
-        ngx.log(ngx.INFO, "[WEBP] Vips exit code: ", tostring(exit_code))
+        ngx.log(ngx.ERR, "[WEBP] Vips exit code: ", tostring(exit_code))
         if result and result ~= "" then
-            ngx.log(ngx.INFO, "[WEBP] Vips output: ", result)
+            ngx.log(ngx.ERR, "[WEBP] Vips output: ", result)
         end
         
         -- Check if conversion was successful
         -- io.popen returns true on success (exit code 0), or nil/false on failure
-        -- In Lua, exit_code is true if command succeeded (exit 0)
         if exit_code == true or exit_code == 0 then
             if file_exists(output_path) then
-                ngx.log(ngx.INFO, "[WEBP] Vips conversion successful")
+                ngx.log(ngx.ERR, "[WEBP] Vips conversion SUCCESS")
                 return true, nil
             else
                 ngx.log(ngx.ERR, "[WEBP] Vips reported success but file not found: ", output_path)
@@ -153,17 +152,38 @@ end
 
 -- Ensure cache directory exists
 local function ensure_cache_dir()
-    -- Create directory with proper permissions (755: owner rwx, group/others rx)
-    -- OpenResty runs as root, so owner write permission is sufficient
+    -- Create directory with proper permissions (777 for write access - temporary fix)
+    -- OpenResty runs as root, but we need to ensure directory is writable
     local parent_dir = "/usr/local/openresty/nginx/html/assets"
-    local cmd1 = string.format("chmod 755 '%s' 2>/dev/null", parent_dir)
-    local cmd2 = string.format("mkdir -p '%s' && chmod 755 '%s' 2>/dev/null", cache_dir, cache_dir)
+    
+    -- First ensure parent directory exists and is writable
+    local cmd0 = string.format("mkdir -p '%s' 2>/dev/null", parent_dir)
+    local cmd1 = string.format("chmod 777 '%s' 2>/dev/null", parent_dir)
+    
+    -- Then create cache directory with full permissions
+    local cmd2 = string.format("mkdir -p '%s' 2>/dev/null", cache_dir)
+    local cmd3 = string.format("chmod 777 '%s' 2>/dev/null", cache_dir)
+    
+    ngx.log(ngx.ERR, "[WEBP] Creating cache directory: ", cache_dir)
+    os.execute(cmd0)
     os.execute(cmd1)
-    local result = os.execute(cmd2)
-    if result ~= 0 then
+    local result2 = os.execute(cmd2)
+    local result3 = os.execute(cmd3)
+    
+    if result2 ~= 0 or result3 ~= 0 then
         ngx.log(ngx.ERR, "[WEBP] Failed to create cache directory: ", cache_dir)
+        ngx.log(ngx.ERR, "[WEBP] mkdir result: ", tostring(result2), ", chmod result: ", tostring(result3))
+        return false
     else
-        ngx.log(ngx.DEBUG, "[WEBP] Cache directory ready: ", cache_dir)
+        ngx.log(ngx.ERR, "[WEBP] Cache directory ready: ", cache_dir)
+        -- Verify directory exists
+        if file_exists(cache_dir) then
+            ngx.log(ngx.ERR, "[WEBP] Cache directory verified: ", cache_dir)
+            return true
+        else
+            ngx.log(ngx.ERR, "[WEBP] Cache directory created but not found: ", cache_dir)
+            return false
+        end
     end
 end
 

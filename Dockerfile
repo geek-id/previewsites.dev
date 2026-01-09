@@ -2,8 +2,10 @@
 FROM --platform=linux/amd64 openresty/openresty:latest
 
 # Install necessary tools (e.g Lua modules)
+# Install image processing libraries: libvips (preferred) and ImageMagick (fallback)
 RUN apt-get update && apt-get install -y curl \
     ca-certificates curl unzip luarocks \
+    libvips-tools imagemagick \
     && luarocks install lua-cjson \
     && luarocks install lua-resty-http \
     && apt-get clean \
@@ -15,8 +17,14 @@ WORKDIR /usr/local/openresty/nginx
 # Copy the nginx configuration
 COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 
+# Copy Lua image converter module
+COPY lua/image_converter.lua /usr/local/openresty/nginx/lua/image_converter.lua
+
 # Copy the HTML form (index.html)
 COPY html /usr/local/openresty/nginx/html
+
+# Create cache directory for converted WEBP images
+RUN mkdir -p /usr/local/openresty/nginx/html/assets/.webp_cache
 
 # Expose port 80 for HTTP Traffic
 EXPOSE 80

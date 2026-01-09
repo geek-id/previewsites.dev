@@ -22,7 +22,12 @@
 
 - **Dockerized Deployment**:
   - Fully containerized setup for easy deployment using Docker.
-  - Exposes the service on port 3019 for easy integration.
+  - Exposes the service on port 80 for easy integration.
+
+- **Automatic WEBP Image Optimization**:
+  - On-the-fly conversion of JPG, JPEG, and PNG images to WEBP format for modern browsers.
+  - Automatic browser detection and fallback to original format for older browsers.
+  - Persistent caching system to avoid repeated conversions and improve performance.
 
 ---
 
@@ -36,6 +41,13 @@
    - A simple, responsive web form (`index.html`) allows users to input the domain and IP for preview creation.
    - The form integrates seamlessly with Lua to handle requests and set expiration timers.
 
+3. **Image Optimization with WEBP**:
+   - Automatic on-the-fly conversion of images (JPG, JPEG, PNG) to WEBP format using Lua scripts.
+   - Uses libvips (preferred) or ImageMagick (fallback) for efficient image processing.
+   - Browser support detection via `Accept` header - modern browsers receive WEBP, older browsers receive original format.
+   - Persistent disk caching to avoid repeated conversions and ensure fast subsequent requests.
+   - Quality set to 85% for optimal balance between file size and image quality.
+
 ---
 
 ## 📦 **How to Use**
@@ -44,11 +56,11 @@
    - Build and run the Docker image provided in the repository:
      ```bash
      docker build -t previewsites .
-     docker run -p 3019:3019 previewsites
+     docker run -p 80:80 previewsites
      ```
 
 2. **Access the Web Interface**:
-   - Open your browser and navigate to `http://localhost:3019`.
+   - Open your browser and navigate to `http://localhost`.
    - Use the form to input the domain name and server IP.
 
 3. **Temporary Subdomains**:
@@ -65,6 +77,20 @@
   - Test and debug sites on a new server without changing DNS records.
 - **Site Migrations**:
   - Preview websites during migration to ensure functionality before updating the live DNS.
+
+---
+
+## 🖼️ **Image Optimization**
+
+**previewsites.dev** includes automatic WEBP image optimization for improved performance:
+
+- **Supported Formats**: JPG, JPEG, PNG are automatically converted to WEBP
+- **Browser Detection**: Automatically detects browser WEBP support via `Accept` header
+- **Smart Caching**: Converted images are cached on disk to avoid repeated conversions
+- **Fallback Support**: Older browsers automatically receive the original image format
+- **Performance**: Uses libvips (preferred) or ImageMagick (fallback) for fast, efficient conversion
+
+For detailed information about the WEBP optimization feature, see [WEBP_OPTIMIZATION.md](./WEBP_OPTIMIZATION.md).
 
 ---
 

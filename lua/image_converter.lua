@@ -152,38 +152,37 @@ end
 
 -- Ensure cache directory exists
 local function ensure_cache_dir()
-    -- Create directory with proper permissions (777 for write access - temporary fix)
-    -- OpenResty runs as root, but we need to ensure directory is writable
+    -- Create directory with proper permissions (777 for write access)
+    -- Use shell command to ensure both mkdir and chmod execute properly
+    ngx.log(ngx.ERR, "[WEBP] Ensuring cache directory exists: ", cache_dir)
+    
+    -- Use /bin/sh -c to execute multiple commands
+    local cmd = string.format("/bin/sh -c 'mkdir -p %s && chmod 777 %s'", cache_dir, cache_dir)
+    local result = os.execute(cmd)
+    
+    -- Also ensure parent directory is writable
     local parent_dir = "/usr/local/openresty/nginx/html/assets"
+    os.execute(string.format("/bin/sh -c 'chmod 777 %s'", parent_dir))
     
-    -- First ensure parent directory exists and is writable
-    local cmd0 = string.format("mkdir -p '%s' 2>/dev/null", parent_dir)
-    local cmd1 = string.format("chmod 777 '%s' 2>/dev/null", parent_dir)
-    
-    -- Then create cache directory with full permissions
-    local cmd2 = string.format("mkdir -p '%s' 2>/dev/null", cache_dir)
-    local cmd3 = string.format("chmod 777 '%s' 2>/dev/null", cache_dir)
-    
-    ngx.log(ngx.ERR, "[WEBP] Creating cache directory: ", cache_dir)
-    os.execute(cmd0)
-    os.execute(cmd1)
-    local result2 = os.execute(cmd2)
-    local result3 = os.execute(cmd3)
-    
-    if result2 ~= 0 or result3 ~= 0 then
-        ngx.log(ngx.ERR, "[WEBP] Failed to create cache directory: ", cache_dir)
-        ngx.log(ngx.ERR, "[WEBP] mkdir result: ", tostring(result2), ", chmod result: ", tostring(result3))
-        return false
-    else
-        ngx.log(ngx.ERR, "[WEBP] Cache directory ready: ", cache_dir)
-        -- Verify directory exists
-        if file_exists(cache_dir) then
-            ngx.log(ngx.ERR, "[WEBP] Cache directory verified: ", cache_dir)
+    -- Verify directory exists and check permission
+    if file_exists(cache_dir) then
+        -- Try to test write permission by creating a test file
+        local test_file = cache_dir .. "/.write_test"
+        local test_cmd = string.format("/bin/sh -c 'touch %s && rm -f %s'", test_file, test_file)
+        local test_result = os.execute(test_cmd)
+        
+        if test_result then
+            ngx.log(ngx.ERR, "[WEBP] Cache directory ready and writable: ", cache_dir)
             return true
         else
-            ngx.log(ngx.ERR, "[WEBP] Cache directory created but not found: ", cache_dir)
-            return false
+            ngx.log(ngx.ERR, "[WEBP] Cache directory exists but not writable: ", cache_dir)
+            -- Try to fix permission again
+            os.execute(string.format("/bin/sh -c 'chmod -R 777 %s'", cache_dir))
+            return true  -- Return true anyway, let conversion try
         end
+    else
+        ngx.log(ngx.ERR, "[WEBP] Failed to create cache directory: ", cache_dir, ", result: ", tostring(result))
+        return false
     end
 end
 
@@ -276,4 +275,5 @@ function _M.serve_webp(webp_path)
 end
 
 return _M
+
 

@@ -24,10 +24,11 @@ COPY lua/image_converter.lua /usr/local/openresty/nginx/lua/image_converter.lua
 COPY html /usr/local/openresty/nginx/html
 
 # Create cache directory for converted WEBP images (after COPY to ensure assets exists)
-# Set proper permissions so nginx worker can write to it
-# Note: OpenResty typically runs as root in container, but we set 777 for safety
+# Set proper permissions: 755 for directories (owner: rwx, group/others: rx)
+# OpenResty typically runs as root in container, so owner write is sufficient
 RUN mkdir -p /usr/local/openresty/nginx/html/assets/.webp_cache && \
-    chmod -R 777 /usr/local/openresty/nginx/html/assets && \
+    chmod 755 /usr/local/openresty/nginx/html/assets && \
+    chmod 755 /usr/local/openresty/nginx/html/assets/.webp_cache && \
     chown -R root:root /usr/local/openresty/nginx/html/assets
 
 # Expose port 80 for HTTP Traffic

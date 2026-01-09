@@ -106,11 +106,11 @@ end
 
 -- Ensure cache directory exists
 local function ensure_cache_dir()
-    -- Create directory with proper permissions (777 for write access)
-    -- Also ensure parent directory (assets) is writable
+    -- Create directory with proper permissions (755: owner rwx, group/others rx)
+    -- OpenResty runs as root, so owner write permission is sufficient
     local parent_dir = "/usr/local/openresty/nginx/html/assets"
-    local cmd1 = string.format("chmod 777 '%s' 2>/dev/null", parent_dir)
-    local cmd2 = string.format("mkdir -p '%s' && chmod -R 777 '%s' 2>/dev/null", cache_dir, cache_dir)
+    local cmd1 = string.format("chmod 755 '%s' 2>/dev/null", parent_dir)
+    local cmd2 = string.format("mkdir -p '%s' && chmod 755 '%s' 2>/dev/null", cache_dir, cache_dir)
     os.execute(cmd1)
     local result = os.execute(cmd2)
     if result ~= 0 then
